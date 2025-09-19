@@ -1,6 +1,7 @@
 package org.example.springbootbasics
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -54,12 +55,18 @@ class QuoteController {
     @DeleteMapping("/{id}")
     fun deleteQuotes(
         @PathVariable("id") id: Long
-    ) {
+    ) : ResponseEntity<Void> {
         val quoteToDelete  = quotes.find { it.id == id }
-        if (quoteToDelete != null) {
+        return if (quoteToDelete != null) {
             quotes.remove(quoteToDelete)
+
+            ResponseEntity.ok().build()
+
         }else{
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
+            //throw ResponseStatusException(HttpStatus.NOT_FOUND)
+            //ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+            throw QuoteNotFoundException(id)
+
         }
     }
 
